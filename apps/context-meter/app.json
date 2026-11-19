@@ -1,6 +1,6 @@
 {
   "name": "context-meter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "One-page report of how much context the project takes (always loaded, skill descriptions, shared memory, corpus) per model family, with a trend over time and what to do (trim, condense, index, RAG).",
   "run": "python3 .agate/apps/context-meter/run.py --open",
   "requires": {"agate": ">=0.4.1", "python": ">=3.9"},

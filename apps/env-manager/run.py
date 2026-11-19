@@ -6,7 +6,7 @@
   run.py                      manage all variables (replace, add, verify, remove, new)
   run.py --plan               show where it would open, change nothing
 
-The channel is chosen in code: Orca's browser → local browser → Tailscale with allowlist → SSH port-forward.
+The channel is chosen in code: Orca's browser → local browser → Tailscale link (remote-preview) → SSH port-forward.
 Public tunnels, claude.ai and the chat are never offered. Prints at most 3 lines; values are never printed.
 """
 
@@ -47,8 +47,7 @@ def names_for(root, package, agate=launch.run_agate):
 
 def decide(root, f, forced=None):
     """(modes to try, notes). Pure apart from reading the project; `forced` may only narrow, never widen."""
-    allow = launch.identities(root)
-    modes, skipped = launch.plan(f, launch.preview_skill_dir(root), allow)
+    modes, skipped = launch.plan(f, launch.preview_skill_dir(root))
     if forced:
         if forced not in modes:
             return [], ["%s is not available here" % forced] + skipped
@@ -107,12 +106,8 @@ def main(argv=None, env=None):
         elif mode == "tailscale":
             url, handle, why = launch.expose_tailscale(root, port)
             if url:
-                host = url.split("//", 1)[1].split("/", 1)[0].lower()
-                st.hosts |= {host, host.split(":")[0]}
-                st.mode, st.identity_header, st.allow = "tailscale", "Tailscale-User-Login", tuple(
-                    launch.identities(root))
-                opened = "give the person this private link (tailnet, only %s): %s?t=%s" % (
-                    ", ".join(server._mask(x) for x in st.allow), url.rstrip("/") + "/", st.token)
+                st.mode = "tailscale"
+                opened = "give the person this link (tailnet only): %s?t=%s" % (url, st.token)
                 break
             skipped.append("tailscale: " + why)
 

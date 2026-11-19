@@ -17,8 +17,8 @@ python3 .agate/apps/env-manager/run.py --plan               # where it would ope
 1. **Inside Orca** → Orca's browser (`orca tab create`). The server listens on `127.0.0.1` of the machine; Orca's
    browser reaches it without exposing anything. If the person's desktop isn't connected, it tries the next one.
 2. **Local machine with a display** → your browser.
-3. **Remote machine** → only via **Tailscale** with the `remote-preview` skill and an allowlist
-   (`preview_identity:` in `memory/local/preferences.yml`). Anyone else on the tailnet gets 403.
+3. **Remote machine** → a **Tailscale** link with the `remote-preview` skill: it listens on the machine's Tailscale
+   address, so only the tailnet can open it. The link carries a one-time token. No accounts or allowlists.
 4. **Remote without a private channel** → it says so and offers an **SSH port-forward** (the server still listens
    only on `127.0.0.1`). Public tunnels, claude.ai artifacts and pasting in the chat are never offered.
 5. **Terminal** is always an alternative: `python3 .agate/agate.py env set NAME` (hidden input).

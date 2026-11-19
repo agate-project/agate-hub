@@ -141,15 +141,6 @@ def language(root):
     return ""
 
 
-def identities(root):
-    """Allowlist for remote access (preview_identity), shared with the remote-preview skill."""
-    local = os.path.join(root, "memory", "local")
-    val = read_yaml(os.path.join(local, "preferences.yml")).get("preview_identity")
-    if not isinstance(val, str) or not val:
-        val = _frontmatter_value(os.path.join(local, "preferences.md"), "preview_identity") or ""
-    return [v.strip().lower() for v in val.split(",") if v.strip()]
-
-
 def today():
     return date.today().isoformat()
 
@@ -171,10 +162,11 @@ def facts(env=None, which=shutil.which, system=None):
             "ssh": ssh, "orca_remote": orca_remote, "tailscale": bool(which("tailscale"))}
 
 
-def plan(f, preview_skill, allow):
+def plan(f, preview_skill, allow=None):
     """Ordered UI channels to try, plus why some were skipped. Terminal is always offered separately.
 
     Excluded on purpose, in code: public tunnels, claude.ai artifacts, pasting values in the chat.
+    `allow` is ignored (kept for older callers): the tailnet link needs no accounts or allowlists.
     """
     modes, skipped = [], []
     if f["in_orca"]:
@@ -187,9 +179,6 @@ def plan(f, preview_skill, allow):
         elif not preview_skill:
             skipped.append("tailscale: needs the remote-preview skill (`python3 .agate/agate.py add "
                            "agate/remote-preview`)")
-        elif not allow:
-            skipped.append("tailscale: no allowlist; save `preview_identity: <your tailscale login>` in "
-                           "memory/local/preferences.yml")
         else:
             modes.append("tailscale")
     return modes, skipped
@@ -263,33 +252,29 @@ def open_local(url):
 
 
 def expose_tailscale(root, port):
-    """Publish 127.0.0.1:<port> on the tailnet with the remote-preview Tailscale provider (never Funnel)."""
+    """Share 127.0.0.1:<port> on the tailnet with the remote-preview skill (its Tailscale address; never public)."""
     d = preview_skill_dir(root)
     if not d:
         return None, None, "remote-preview skill not installed"
     if d not in sys.path:
         sys.path.insert(0, d)
     try:
-        from providers.tailscale import PROVIDER  # noqa: PLC0415
+        import preview  # noqa: PLC0415
     except Exception as e:  # noqa: BLE001
-        return None, None, "cannot load the Tailscale provider: %s" % e
-    ok, why = PROVIDER.available()
-    if not ok:
-        return None, None, why
-    try:
-        res = PROVIDER.expose(port, {"root": root})
-    except Exception as e:  # noqa: BLE001
-        return None, None, str(e)
-    if not res.get("url"):
-        return None, res.get("handle"), res.get("note") or "manual step needed"
-    return res["url"], (PROVIDER, res.get("handle")), ""
+        return None, None, "cannot load remote-preview: %s" % e
+    if not hasattr(preview, "start"):
+        return None, None, "remote-preview is too old: `python3 .agate/agate.py update remote-preview --yes`"
+    entry, err = preview.start(root, upstream=port)
+    if err:
+        return None, None, err
+    return entry["url"], (preview, root, entry["id"]), ""
 
 
 def unexpose(handle):
-    if handle and isinstance(handle, tuple):
-        prov, h = handle
+    if handle and isinstance(handle, tuple) and len(handle) == 3:
+        mod, root, entry_id = handle
         try:
-            prov.stop(h)
+            mod.stop(root, entry_id)
         except Exception:  # noqa: BLE001
             pass
 

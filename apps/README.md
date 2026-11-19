@@ -25,7 +25,7 @@ apps/<name>/
 ```
 
 ## Rules
-- The channel to open a page is decided **in code**: Orca's browser → local browser → Tailscale with an allowlist →
+- The channel to open a page is decided **in code**: Orca's browser → local browser → Tailscale link (`remote-preview`) →
   SSH port-forward. Public tunnels, claude.ai artifacts and pasting secrets in the chat are never offered.
 - Pages are **mini and standalone** (no desktop chrome) and reuse Agate's visual tokens, so Agate Desktop can embed
   them later.

@@ -20,7 +20,7 @@
 ## What's here
 | | Name | What it does | Install |
 |---|---|---|---|
-| 🧩 skill | `remote-preview` | Show a local page or dev server from a remote machine, privately (Orca, Tailscale allowlist, SSH). | `add remote-preview` |
+| 🧩 skill | `remote-preview` | Share a local page, canvas or dev server from a remote machine with a Tailscale link (tailnet only; no accounts). | `add remote-preview` |
 | 🧩 skill | `quick-start` | Optional guided start for a new project (max 4 questions). | `add quick-start` |
 | 📦 extension | `product` | Product work: visible research, several options with risks, stop and wait for a choice. *(draft)* | `add product` |
 | 🖥️ app | `env-manager` | A small private page to set API keys: values go straight to `.env`, never through the AI. | `add app:env-manager` |
