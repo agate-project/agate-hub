@@ -79,17 +79,59 @@ def save_registry(root, items):
 
 
 def read_identity(root):
-    path = os.path.join(state_dir(root), "preferences.md")
-    try:
-        with open(path, encoding="utf-8") as f:
-            lines = f.readlines()
-    except OSError:
-        return []
-    for line in lines:
-        if line.strip().lower().startswith("preview_identity:"):
-            val = line.split(":", 1)[1].strip().strip("\"'")
-            return [v.strip().lower() for v in val.split(",") if v.strip()]
+    """preview_identity from memory/local/preferences.yml (0.4.1+), falling back to the 0.4.0 preferences.md."""
+    for name in ("preferences.yml", "preferences.md"):
+        try:
+            with open(os.path.join(state_dir(root), name), encoding="utf-8") as f:
+                lines = f.readlines()
+        except OSError:
+            continue
+        for line in lines:
+            if line.strip().lower().startswith("preview_identity:"):
+                val = line.split(":", 1)[1].split(" #", 1)[0].strip().strip("\"'")
+                return [v.strip().lower() for v in val.split(",") if v.strip()]
     return []
+
+
+# ---------- local or remote, and is there a private channel? ----------
+
+NO_PRIVATE_CHANNEL = ("Remote machine without a private channel (Tailscale / Cloudflare Access / Orca). Options: "
+                      "install Tailscale, open the project in Orca, or use an SSH port-forward (command: {ssh}). "
+                      "Public tunnels are not offered.")
+
+
+def machine(env=None):
+    """(is_remote, reasons). Explicit about why this does not look like the person's own computer."""
+    env = os.environ if env is None else env
+    why = []
+    if env.get("SSH_CONNECTION") or env.get("SSH_CLIENT") or env.get("SSH_TTY"):
+        why.append("SSH session")
+    if env.get("ORCA_REMOTE_PAIRING"):
+        why.append("Orca remote host")
+    if sys.platform.startswith("linux") and not (env.get("DISPLAY") or env.get("WAYLAND_DISPLAY")):
+        why.append("no display")
+    return bool(why), why
+
+
+def private_channel(provs, env=None):
+    """Name of an available private channel, or None. Orca counts only inside an Orca session."""
+    env = os.environ if env is None else env
+    for p in provs:
+        if p.name in ("tailscale", "cloudflare-access") and p.available()[0]:
+            return p.name
+    if (env.get("ORCA_AGENT_SESSION_ID") or env.get("ORCA_CLI_COMMAND")) and any(
+            p.name == "orca" and p.available()[0] for p in provs):
+        return "orca"
+    return None
+
+
+def ssh_hint(port):
+    try:
+        from providers.ssh import ssh_target
+        user, host = ssh_target()
+    except Exception:
+        user, host = os.environ.get("USER", "user"), "this-server"
+    return "ssh -N -L {p}:127.0.0.1:{p} {u}@{h}".format(p=port, u=user, h=host)
 
 
 # ---------- project providers (approved only) ----------
@@ -299,6 +341,8 @@ def wait_health(port, timeout=6.0):
 # ---------- commands ----------
 
 def cmd_detect(root, args):
+    remote_now, why = machine()
+    print("machine: %s" % (("REMOTE (" + ", ".join(why) + ")") if remote_now else "local"))
     hints = []
     if os.environ.get("SSH_CONNECTION") or os.environ.get("SSH_CLIENT"):
         hints.append("ssh session")
@@ -321,6 +365,8 @@ def cmd_detect(root, args):
         print(warning)
     best = choose(provs)
     print("default: %s" % (best.name if best else "none"))
+    if remote_now and not private_channel(provs):
+        print("WARNING: " + NO_PRIVATE_CHANNEL.format(ssh=ssh_hint("<port>")))
     try:
         from providers.orca import orca_ports
         ports = orca_ports()
@@ -335,7 +381,7 @@ def cmd_detect(root, args):
             print("orca ports: %s" % (listed or "none"))
     who = read_identity(root)
     print("allowlist: %s" % (", ".join(who) if who else "not set (ask the person; save preview_identity: in "
-                                                          "memory/local/preferences.md)"))
+                                                          "memory/local/preferences.yml)"))
     return 0
 
 
@@ -389,6 +435,10 @@ def cmd_serve(root, args):
         if not ok:
             print("%s not available: %s" % (prov.name, why), file=sys.stderr)
             return 2
+        remote_now, _ = machine()
+        if remote_now and not private_channel(provs) and prov.privacy == "public":
+            print("WARNING: " + NO_PRIVATE_CHANNEL.format(ssh=ssh_hint("<port>")), file=sys.stderr)
+            return 2
         if prov.privacy == "public" and not args.i_understand_public:
             print("%s is PUBLIC: needs --i-understand-public and the person's explicit ok" % prov.name,
                   file=sys.stderr)
@@ -397,10 +447,12 @@ def cmd_serve(root, args):
     allow = [a.lower() for a in (args.allow or [])] or read_identity(root)
     if header and not allow:
         print("no allowlist: ask the person for their %s identity and save it as `preview_identity:` in "
-              "memory/local/preferences.md (or pass --allow)" % prov.name, file=sys.stderr)
+              "memory/local/preferences.yml (or pass --allow)" % prov.name, file=sys.stderr)
         return 2
     entry_id = time.strftime("p%m%d%H%M%S")
     port = free_port()
+    if prov is not None and machine()[0] and not private_channel(provs):
+        print("WARNING: " + NO_PRIVATE_CHANNEL.format(ssh=ssh_hint(port)))
     pid, log_path = _spawn(root, entry_id, port, args.dir, args.port, header, allow)
     if not wait_health(port):
         proc.kill(pid)

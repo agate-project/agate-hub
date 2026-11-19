@@ -45,7 +45,7 @@ Selection: most private available first; ties broken by the order above. `--via`
 
 ## Troubleshooting
 - `serve` says "no allowlist": ask the person for their Tailscale login (e.g. `name@example.com` as shown in the
-  Tailscale admin) or Access email, save `preview_identity: <id>` in `memory/local/preferences.md`.
+  Tailscale admin) or Access email, save `preview_identity: <id>` in `memory/local/preferences.yml`.
 - 403 for the person: their identity differs from the allowlist (check the login Tailscale shows for their device).
 - 502: the dev server behind `--port` isn't answering.
 - WebSockets and server-sent streaming through `--port` aren't proxied; expose the dev server directly with the

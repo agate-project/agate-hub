@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Agate · Keys</title>
+<style>
+:root{--bg:#F5F3EF;--panel:#FFFFFF;--sunk:#F6F4F0;--ink:#1C1A17;--ink2:#46413B;--mut:#78716A;--line:#E5E0D8;
+--acc:#2D6A8E;--acc2:#E6EFF5;--accInk:#1E4E6B;--ok:#2B7A57;--ok2:#E3F1EA;--warn:#9C640F;--warn2:#FAF0DD;
+--bad:#AF3838;--bad2:#F8E6E6;--r:10px;--sh:0 1px 2px rgba(40,30,20,.05),0 6px 20px rgba(40,30,20,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#0A0D12;--panel:#141920;--sunk:#0F1318;--ink:#EDEFF3;--ink2:#C3C8D1;
+--mut:#8D95A2;--line:#262D36;--acc:#8DC1E1;--acc2:rgba(141,193,225,.13);--accInk:#BFE0F3;--ok:#72D5A5;
+--ok2:rgba(114,213,165,.12);--warn:#F1C46C;--warn2:rgba(241,196,108,.12);--bad:#F28D8D;--bad2:rgba(242,141,141,.12);
+--sh:0 10px 30px rgba(0,0,0,.3);color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:560px;margin:0 auto}.wide{max-width:900px}
+.brand{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12.5px;margin-bottom:14px}
+.brand b{color:var(--ink);font-weight:650}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh);padding:20px 22px}
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}.sub{color:var(--mut);margin:0 0 16px;font-size:13px}
+.field{border-top:1px solid var(--line);padding:14px 0}.field:first-of-type{border-top:0;padding-top:4px}
+.name{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace}
+.where{color:var(--mut);font-size:12.5px;margin:2px 0 8px}.where a{color:var(--acc)}
+.row{display:flex;gap:8px;align-items:center}
+input{flex:1;min-width:0;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink);
+padding:0 10px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
+input:focus{outline:2px solid var(--acc);outline-offset:1px}
+.field>input{display:block;width:100%}
+input.plain{font:13px system-ui,-apple-system,"Segoe UI",sans-serif}
+.hint{font-size:12px;margin-top:5px;min-height:16px}.hint.ok{color:var(--ok)}.hint.warn{color:var(--warn)}.hint.bad{color:var(--bad)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;
+white-space:nowrap}
+.c-ok{background:var(--ok2);color:var(--ok)}.c-warn{background:var(--warn2);color:var(--warn)}.c-bad{background:var(--bad2);color:var(--bad)}
+.c-n{background:var(--acc2);color:var(--accInk)}
+button{height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);
+font:600 13px system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;white-space:nowrap}
+button.pri{background:var(--acc);border-color:transparent;color:#fff}
+@media (prefers-color-scheme:dark){button.pri{color:#0A1622}}
+button.sm{height:28px;padding:0 10px;font-size:12px}button.link{border:0;background:none;color:var(--acc);padding:0 4px}
+button:disabled{opacity:.55;cursor:default}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.note{color:var(--mut);font-size:12px;margin-top:12px}
+.res{margin-top:14px;display:grid;gap:6px}.res div{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.fp{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mut)}
+.done{text-align:center;padding:10px 0}.done h1{margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:650;
+padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl{overflow-x:auto}.tbl table{min-width:640px}
+.inline{background:var(--sunk);border-radius:8px;padding:10px}
+.alert{background:var(--bad2);color:var(--bad);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:13px}
+.risk li{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script nonce="__NONCE__">
+(function(){
+"use strict";
+var BOOT = __BOOT__;
+var S = {
+ en:{brand:"Agate · keys",title1:"Key for {p}",titleN:"Keys for {p}",titleVars:"Keys this project needs",
+  sub:"Paste each value. It goes straight to this project's .env file; it never passes through the AI.",
+  save:"Save and verify",saving:"Saving…",paste:"Paste the value",empty:"empty",
+  quotes:"Remove the quotes around the value",spaces:"Remove spaces or line breaks",fmtok:"Format looks right ({x}…)",
+  fmtbad:"Unexpected format (expected {x}…)",done:"Done. You can close this tab; the server has shut down.",
+  verified:"verified",rejected:"rejected by the provider",unchecked:"saved (no live check)",err:"not saved",
+  consentT:"Before you paste a key",consentB:"Keys stay on this machine, in the project's .env file (not in git). Keep in mind:",
+  r1:"If your computer or browser is compromised, anything you type can be read, with any method.",
+  r2:"This link works once and expires in 10 minutes; the form never shows saved values.",
+  r3:"If you ever suspect a leak, rotate the key at the provider and save the new one here.",
+  ok:"Understood",manage:"Project keys",manageSub:"Values are never shown. Status comes from agate.py env check.",
+  name:"Variable",usedby:"Used by",status:"Status",fp:"Fingerprint",act:"",replace:"Replace",addv:"Add value",
+  verify:"Verify",remove:"Remove",confirm:"Remove {n}? It leaves .env.example and its line in .env is cleared.",
+  yes:"Yes, remove",cancel:"Cancel",newv:"New variable",where:"Where to get it",forp:"Used by (package)",add:"Add",
+  finish:"Finish",st:{missing:"missing",empty:"empty",set:"set",placeholder:"example value","from environment":"from environment"},
+  live:"live: {x}",closed:"Saved. The server has shut down; you can close this tab.",none:"No variables declared yet."},
+ es:{brand:"Agate · claves",title1:"Clave para {p}",titleN:"Claves para {p}",titleVars:"Claves que necesita este proyecto",
+  sub:"Pega cada valor. Va directo al archivo .env de este proyecto; nunca pasa por la IA.",
+  save:"Guardar y verificar",saving:"Guardando…",paste:"Pega el valor",empty:"vacía",
+  quotes:"Quita las comillas del valor",spaces:"Quita espacios o saltos de línea",fmtok:"El formato parece correcto ({x}…)",
+  fmtbad:"Formato inesperado (se esperaba {x}…)",done:"Listo. Puedes cerrar esta pestaña; el servidor se apagó.",
+  verified:"verificada",rejected:"rechazada por el proveedor",unchecked:"guardada (sin verificación en vivo)",err:"no se guardó",
+  consentT:"Antes de pegar una clave",consentB:"Las claves quedan en esta máquina, en el archivo .env del proyecto (fuera de git). Ten en cuenta:",
+  r1:"Si tu computadora o tu navegador están comprometidos, lo que escribas se puede leer, con cualquier método.",
+  r2:"Este enlace funciona una vez y vence en 10 minutos; el formulario nunca muestra valores guardados.",
+  r3:"Si alguna vez sospechas una filtración, renueva la clave en el proveedor y guarda la nueva aquí.",
+  ok:"Entendido",manage:"Claves del proyecto",manageSub:"Los valores nunca se muestran. El estado sale de agate.py env check.",
+  name:"Variable",usedby:"La usa",status:"Estado",fp:"Huella",act:"",replace:"Reemplazar",addv:"Agregar valor",
+  verify:"Verificar",remove:"Quitar",confirm:"¿Quitar {n}? Sale de .env.example y se borra su línea en .env.",
+  yes:"Sí, quitar",cancel:"Cancelar",newv:"Nueva variable",where:"Dónde se saca",forp:"La usa (paquete)",add:"Agregar",
+  finish:"Terminar",st:{missing:"falta",empty:"vacía",set:"con valor",placeholder:"valor de ejemplo","from environment":"del entorno"},
+  live:"en vivo: {x}",closed:"Guardado. El servidor se apagó; puedes cerrar esta pestaña.",none:"Todavía no hay variables declaradas."}
+};
+var lang = (BOOT.lang || (navigator.language||"en")).slice(0,2);
+var T = S[lang] || S.en;
+document.documentElement.lang = S[lang] ? lang : "en";
+var PREFIX = [["ANTHROPIC","sk-ant-"],["OPENAI","sk-"],["TAVILY","tvly-"],["GITHUB","ghp_"],["SLACK","xox"],["CLICKUP","pk_"]];
+var app = document.getElementById("app");
+
+function f(s,o){return s.replace(/\{(\w+)\}/g,function(_,k){return o[k];});}
+function el(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==="text")e.textContent=attrs[k];
+ else if(k==="cls")e.className=attrs[k];else if(k.slice(0,2)==="on")e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k]);}
+ (kids||[]).forEach(function(c){if(c)e.appendChild(typeof c==="string"?document.createTextNode(c):c);});return e;}
+function api(path,body){return fetch(path,{method:body?"POST":"GET",credentials:"same-origin",cache:"no-store",
+ headers:body?{"Content-Type":"application/json","X-CSRF":BOOT.csrf}:{},body:body?JSON.stringify(body):undefined})
+ .then(function(r){return r.json().catch(function(){return {error:r.status};});});}
+function chip(status){var cls={set:"c-ok","from environment":"c-ok",empty:"c-warn",placeholder:"c-warn",missing:"c-bad"}[status]||"c-n";
+ return el("span",{cls:"chip "+cls,text:(T.st[status]||status)});}
+function whereNode(w){if(!w)return null;var m=w.match(/https?:\/\/\S+/);var d=el("div",{cls:"where"});
+ if(m){d.appendChild(document.createTextNode(w.replace(m[0],"").replace(/[(\s]+$/,"")+" "));d.appendChild(el("a",{href:m[0],target:"_blank",rel:"noopener noreferrer",text:"↗"}));}
+ else d.textContent=w;return d;}
+function check(name,v){if(!v)return ["",""];if(/^\s|\s$/.test(v)||/\n/.test(v))return ["warn",T.spaces];
+ if(/^["'].*["']$/.test(v))return ["warn",T.quotes];
+ for(var i=0;i<PREFIX.length;i++){if(name.indexOf(PREFIX[i][0])===0){return v.indexOf(PREFIX[i][1])===0?["ok",f(T.fmtok,{x:PREFIX[i][1]})]:["bad",f(T.fmtbad,{x:PREFIX[i][1]})];}}
+ return ["",""];}
+function masked(name,onInput){var inp=el("input",{type:"password",autocomplete:"off",spellcheck:"false","aria-label":name,placeholder:T.paste});
+ var hint=el("div",{cls:"hint"});inp.addEventListener("input",function(){var c=check(name,inp.value);hint.className="hint "+c[0];hint.textContent=c[1];if(onInput)onInput();});
+ return [inp,hint];}
+function resultRow(r){var mark=r.error?["c-bad","✗ "+T.err]:{ok:["c-ok","✓ "+T.verified],rejected:["c-bad","✗ "+T.rejected],unchecked:["c-n","– "+T.unchecked]}[r.verified];
+ return el("div",{},[el("span",{cls:"name",text:r.name}),r.fp?el("span",{cls:"fp",text:"fp:"+r.fp}):null,el("span",{cls:"chip "+mark[0],text:mark[1]})]);}
+function shell(wide,kids){app.className="wrap"+(wide?" wide":"");app.textContent="";
+ app.appendChild(el("div",{cls:"brand"},[el("b",{text:"Agate"}),"·",T.brand.split("·")[1]||""]));
+ app.appendChild(el("div",{cls:"card"},kids));}
+
+function consent(next){shell(false,[el("h1",{text:T.consentT}),el("p",{cls:"sub",text:T.consentB}),
+ el("ul",{cls:"risk"},[el("li",{text:T.r1}),el("li",{text:T.r2}),el("li",{text:T.r3})]),
+ el("div",{cls:"actions"},[el("button",{cls:"pri",text:T.ok,onclick:function(){api("/api/consent",{}).then(function(){BOOT.consent=true;next();});}})])]);}
+
+function focusView(){api("/api/status").then(function(st){
+ var vars=st.vars.filter(function(v){return BOOT.focus.indexOf(v.name)>=0;});var inputs={};
+ var title=BOOT.package?f(vars.length>1?T.titleN:T.title1,{p:BOOT.package}):T.titleVars;
+ var kids=[el("h1",{text:title}),el("p",{cls:"sub",text:T.sub})];
+ var btn=el("button",{cls:"pri",text:T.save,disabled:"disabled"});
+ vars.forEach(function(v){var m=masked(v.name,function(){var any=false;for(var k in inputs)if(inputs[k].value)any=true;if(any)btn.removeAttribute("disabled");else btn.setAttribute("disabled","disabled");});
+  inputs[v.name]=m[0];kids.push(el("div",{cls:"field"},[el("div",{cls:"row"},[el("span",{cls:"name",text:v.name}),chip(v.status),v.fp?el("span",{cls:"fp",text:"fp:"+v.fp}):null]),
+  whereNode(v.where),m[0],m[1]]));});
+ var res=el("div",{cls:"res"});
+ btn.addEventListener("click",function(){var values={};for(var k in inputs){if(inputs[k].value)values[k]=inputs[k].value;}
+  btn.setAttribute("disabled","disabled");btn.textContent=T.saving;
+  api("/api/save",{values:values}).then(function(r){for(var k in inputs){inputs[k].value="";}
+   res.textContent="";(r.results||[{name:"",error:r.error}]).forEach(function(x){res.appendChild(resultRow(x));});
+   btn.textContent=T.save;res.appendChild(el("p",{cls:"note",text:T.done}));});});
+ kids.push(el("div",{cls:"actions"},[btn]));kids.push(res);shell(false,kids);});}
+
+function manageView(){api("/api/status").then(function(st){
+ var kids=[el("h1",{text:T.manage}),el("p",{cls:"sub",text:T.manageSub})];
+ (st.alerts||[]).forEach(function(a){kids.push(el("div",{cls:"alert",text:a}));});
+ var tb=el("tbody");
+ st.vars.forEach(function(v){var tr=el("tr");var actions=el("td",{style:"text-align:right;white-space:nowrap"});
+  tr.appendChild(el("td",{},[el("span",{cls:"name",text:v.name})]));
+  tr.appendChild(el("td",{text:(v.used_by||[]).join(", ")||"—"}));
+  var stc=el("td",{},[chip(v.status)]);if(v.live)stc.appendChild(el("div",{cls:"fp",text:f(T.live,{x:v.live})}));tr.appendChild(stc);
+  tr.appendChild(el("td",{cls:"fp",text:v.fp?"fp:"+v.fp:"—"}));
+  var has=["set","from environment","placeholder"].indexOf(v.status)>=0;
+  actions.appendChild(el("button",{cls:"sm",text:has?T.replace:T.addv,onclick:function(){editRow(tr,v);}}));
+  actions.appendChild(el("button",{cls:"sm link",text:T.verify,onclick:function(e){var b=e.target;b.textContent="…";api("/api/verify",{name:v.name}).then(function(r){b.textContent=f(T.live,{x:r.live||"?"});});}}));
+  actions.appendChild(el("button",{cls:"sm link",text:T.remove,onclick:function(){confirmRow(tr,v);}}));
+  tr.appendChild(actions);tb.appendChild(tr);});
+ var table=st.vars.length?el("div",{cls:"tbl"},[el("table",{},[el("thead",{},[el("tr",{},[T.name,T.usedby,T.status,T.fp,T.act].map(function(h){return el("th",{text:h});}))]),tb])]):el("p",{cls:"sub",text:T.none});
+ kids.push(table);
+ var n=el("input",{cls:"plain",placeholder:"NEW_API_KEY","aria-label":T.name}),w=el("input",{cls:"plain",placeholder:T.where,"aria-label":T.where}),p=el("input",{cls:"plain",placeholder:T.forp,"aria-label":T.forp});
+ kids.push(el("h1",{style:"margin-top:22px;font-size:15px",text:T.newv}));
+ kids.push(el("div",{cls:"row",style:"flex-wrap:wrap"},[n,w,p,el("button",{text:T.add,onclick:function(){var name=n.value.trim().toUpperCase();if(!name)return;api("/api/add",{name:name,where:w.value.trim(),"for":p.value.trim()}).then(manageView);}})]));
+ kids.push(el("div",{cls:"actions"},[el("button",{text:T.finish,onclick:function(){api("/api/done",{}).then(function(){shell(false,[el("div",{cls:"done"},[el("h1",{text:T.done})])]);});}})]));
+ shell(true,kids);});}
+
+function editRow(tr,v){var td=el("td",{colspan:"5"});var m=masked(v.name);var row=el("tr",{},[td]);
+ var save=el("button",{cls:"pri sm",text:T.save,onclick:function(){var values={};values[v.name]=m[0].value;save.setAttribute("disabled","disabled");
+  api("/api/save",{values:values,"continue":true}).then(function(r){m[0].value="";td.textContent="";(r.results||[{name:v.name,error:r.error}]).forEach(function(x){td.appendChild(resultRow(x));});setTimeout(manageView,1600);});}});
+ td.appendChild(el("div",{cls:"inline"},[whereNode(v.where),el("div",{cls:"row"},[m[0],save,el("button",{cls:"sm",text:T.cancel,onclick:function(){row.remove();}})]),m[1]]));
+ tr.parentNode.insertBefore(row,tr.nextSibling);m[0].focus();}
+function confirmRow(tr,v){var td=el("td",{colspan:"5"});var row=el("tr",{},[td]);
+ td.appendChild(el("div",{cls:"inline row"},[el("span",{text:f(T.confirm,{n:v.name}),style:"flex:1"}),
+  el("button",{cls:"sm",text:T.yes,onclick:function(){api("/api/remove",{name:v.name}).then(manageView);}}),
+  el("button",{cls:"sm",text:T.cancel,onclick:function(){row.remove();}})]));tr.parentNode.insertBefore(row,tr.nextSibling);}
+
+var start = BOOT.focus && BOOT.focus.length ? focusView : manageView;
+if (BOOT.consent) start(); else consent(start);
+})();
+</script>
+</body>
+</html>

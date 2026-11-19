@@ -11,7 +11,7 @@ Run everything with `python3 .agents/skills/remote-preview/preview.py …` from 
 1. `preview.py detect` — tells whether this is a remote machine, which providers are available (ordered from
    most to least private) and which local ports Orca sees.
 2. Identity: the allowlist is the person's identity on the provider (their Tailscale login or their Cloudflare
-   Access email). Read `preview_identity:` in `memory/local/preferences.md`; if it's missing, ask once and save it
+   Access email). Read `preview_identity:` in `memory/local/preferences.yml`; if it's missing, ask once and save it
    there. Never expose without an allowlist on a provider that sends an identity header.
 3. Start and expose:
    - a folder: `preview.py serve <dir>`

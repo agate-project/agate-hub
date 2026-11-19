@@ -4,9 +4,28 @@
   "packs": {
     "product": {
       "description": "Product work: discovery, proposals, data memos, tickets, design system, editorial PDFs.",
-      "extensions": ["product"],
-      "skills": ["anthropic/frontend-design", "anthropic/pdf", "anthropic/docx", "anthropic/xlsx"],
+      "extensions": [
+        "product"
+      ],
+      "skills": [
+        "anthropic/frontend-design",
+        "anthropic/pdf",
+        "anthropic/docx",
+        "anthropic/xlsx"
+      ],
       "packs": []
+    }
+  },
+  "apps": {
+    "env-manager": {
+      "description": "Paste API keys into .env without them passing through the AI.",
+      "install": "python3 .agate/agate.py add app:env-manager",
+      "default": false
+    },
+    "context-meter": {
+      "description": "How much context the project takes, per model family, with a trend and what to do.",
+      "install": "python3 .agate/agate.py add app:context-meter",
+      "default": false
     }
   }
 }
