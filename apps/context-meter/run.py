@@ -231,7 +231,7 @@ def open_report(root, path, f):
         ok, _ = launch.open_orca("http://127.0.0.1:%d/" % port)
         if ok:
             return "opened in Orca's browser"
-    if f["display"] and not f["remote"]:
+    if f["display"] and not f["remote"] and not f["in_orca"]:
         ok, _ = launch.open_local("file://" + path)
         if ok:
             return "opened in your browser"

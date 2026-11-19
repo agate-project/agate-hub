@@ -14,6 +14,7 @@ import argparse
 import json
 import os
 import sys
+import threading
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -89,6 +90,8 @@ def main(argv=None, env=None):
     port = srv.server_address[1]
     st.hosts = {"127.0.0.1:%d" % port, "localhost:%d" % port}
     local_url = "http://127.0.0.1:%d/?t=%s" % (port, st.token)
+    serving = threading.Thread(target=srv.serve_forever, kwargs={"poll_interval": 0.3}, daemon=True)
+    serving.start()
 
     opened, handle = None, None
     for mode in modes:
@@ -118,6 +121,7 @@ def main(argv=None, env=None):
             print(launch.NO_PRIVATE_CHANNEL.format(ssh=launch.ssh_forward(port)))
             opened_line = "then open %s · %s" % (local_url, alt)
         else:
+            srv.shutdown()
             srv.server_close()
             print("env-manager: could not open a browser here · " + alt)
             return 1
@@ -130,9 +134,10 @@ def main(argv=None, env=None):
 
     server.watchdog(st)
     try:
-        srv.serve_forever(poll_interval=0.3)
+        while serving.is_alive():
+            serving.join(0.5)
     except KeyboardInterrupt:
-        pass
+        srv.shutdown()
     finally:
         st.server = None
         srv.server_close()

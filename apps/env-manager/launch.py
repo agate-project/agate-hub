@@ -179,7 +179,7 @@ def plan(f, preview_skill, allow):
     modes, skipped = [], []
     if f["in_orca"]:
         modes.append("orca")
-    if f["display"] and not f["remote"]:
+    if f["display"] and not f["remote"] and not f["in_orca"]:
         modes.append("local")
     if f["remote"]:
         if not f["tailscale"]:
@@ -197,6 +197,8 @@ def plan(f, preview_skill, allow):
 
 def where_line(f):
     """One line saying explicitly whether this looks local or remote, and why."""
+    if f.get("in_orca") and not f.get("ssh"):
+        return "machine: Orca workspace (opens in Orca's browser)"
     if not f["remote"]:
         return "machine: local (display available)"
     why = []
@@ -236,11 +238,13 @@ def preview_skill_dir(root):
 def open_orca(url):
     """Open the URL in Orca's browser. False if the person's desktop is not connected."""
     try:
-        p = subprocess.run(["orca", "tab", "create", "--url", url], capture_output=True, text=True, timeout=30)
+        p = subprocess.run(["orca", "tab", "create", "--url", url, "--worktree", "active", "--json"],
+                           capture_output=True, text=True, timeout=30)
     except (OSError, subprocess.TimeoutExpired):
         return False, "orca not answering"
-    if p.returncode != 0:
-        msg = (p.stderr or p.stdout or "").strip()
+    out = (p.stdout or "") + (p.stderr or "")
+    if p.returncode != 0 or '"ok": false' in out:
+        msg = out.strip()
         return False, "browser_host_unavailable" if "browser_host_unavailable" in msg else (msg[:120] or "failed")
     return True, ""
 
