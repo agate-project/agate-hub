@@ -30,6 +30,16 @@ Manifest:
 }
 ```
 
+**Adjust a base line instead of adding one (`slots`).** The base's `agate` block has slots where an expansion can add
+emphasis, e.g. `research_scope` in «When facts matter{…}, check sources…». The expansion gives only values; the base
+owns the wording («(e.g. …)», so it focuses without limiting). Values from several expansions are merged, deduplicated
+and capped at 8 per slot. Prefer a slot over a new line in the expansion's block.
+```json
+"slots": { "research_scope": ["market", "users", "competitors", "trends"] }
+```
+Result in `AGENTS.md`: `- When facts matter (e.g. market, users, competitors, trends), check sources…` (same line).
+Slots today: `research_scope`.
+
 The expansion's `AGENTS.md` contains only its block:
 ```
 <!-- agate-<name>:begin -->

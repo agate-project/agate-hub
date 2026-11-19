@@ -93,10 +93,10 @@ def main(argv=None, env=None):
     serving = threading.Thread(target=srv.serve_forever, kwargs={"poll_interval": 0.3}, daemon=True)
     serving.start()
 
-    opened, handle = None, None
+    opened, handle, orca_why = None, None, ""
     for mode in modes:
         if mode == "orca":
-            ok, _ = launch.open_orca(local_url)
+            ok, orca_why = launch.open_orca(local_url)
             if ok:
                 opened = "opened in Orca's browser"
                 break
@@ -117,6 +117,8 @@ def main(argv=None, env=None):
             skipped.append("tailscale: " + why)
 
     if not opened:
+        if orca_why == "not_added":
+            print(launch.NOT_ADDED.format(root=root))
         if f["remote"]:
             print(launch.NO_PRIVATE_CHANNEL.format(ssh=launch.ssh_forward(port)))
             opened_line = "then open %s · %s" % (local_url, alt)

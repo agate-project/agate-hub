@@ -185,6 +185,11 @@ def destination(item: dict) -> tuple[str, str]:
     return "-", "skipped (unknown type)"
 
 
+SANDBOX_PATH = re.compile(r"(/mnt/(?:skills|user-data|data|outputs)\b|/home/claude\b)")
+ADAPT_HINT = ("uses claude.ai-only paths ({paths}): adapt it before use. Files it reads go in its own folder or "
+              "documents/; outputs go in artifacts/; PDFs: HTML template + `agate.py export pdf` (guide export.md)")
+
+
 def scan(paths: list[Path]) -> dict:
     tmp = Path(tempfile.mkdtemp(prefix="agate-import-"))
     items, connectors, env_vars, mcp_urls = [], set(), set(), set()
@@ -196,12 +201,16 @@ def scan(paths: list[Path]) -> dict:
             item = classify_file(path, rel)
             item["path"] = str(path)
         files = list(path.rglob("*")) if path.is_dir() else [path]
+        sandbox = set()
         for f in files:
             if f.is_file() and f.suffix.lower() in TEXT_EXT and not f.name.lower().startswith(".env"):
                 text = read_text(f)
+                sandbox |= set(SANDBOX_PATH.findall(text))
                 connectors |= {t for t in TOOLS if re.search(r"\b" + re.escape(t) + r"\b", text, re.I)}
                 env_vars |= set(ENV_NAME.findall(text))
                 mcp_urls |= set(MCP_URL.findall(text))
+        if sandbox and item["kind"] in {"agent", "skill", "instructions"}:
+            item["adapt"] = sorted(sandbox)
         item["id"] = len(items) + 1
         item["dest"], item["action"] = destination(item)
         item["auto"] = item["kind"] in {"memory-export", "agent", "skill", "instructions", "notes", "data"}
@@ -215,6 +224,8 @@ def render_plan(plan: dict) -> list[str]:
     shown = plan["items"][:20]
     for it in shown:
         extra = f" · {it['facts']} facts" if it.get("facts") else ""
+        if it.get("adapt"):
+            extra += " · NEEDS ADAPTATION (claude.ai paths: " + ", ".join(it["adapt"][:3]) + ")"
         lines.append(f"{it['id']:>2}. [{it['kind']}] {it['source']}{extra} → {it['dest']}")
     if len(plan["items"]) > len(shown):
         lines.append(f"    +{len(plan['items']) - len(shown)} more (see the plan file)")
@@ -379,6 +390,9 @@ def apply(plan: dict, root: Path, yes: bool) -> list[str]:
                     done.append("your style: memory/local/preferences.yml (+ notes)")
                 else:
                     left.append("save the person's style from memory/local/imported-preferences.md")
+    for it in plan["items"]:
+        if it.get("adapt"):
+            left.append(f"{it['source']} " + ADAPT_HINT.format(paths=", ".join(it["adapt"][:3])))
     for tool in plan.get("connectors", []):
         left.append(f"connector {tool}: ask whether to connect it (.agate/core/guides/mcp-add.md)")
     for var in plan.get("env_vars", []):

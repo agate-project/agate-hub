@@ -12,6 +12,7 @@ do with the person.
 | Notes, docs, data | other text, `.csv`, `.xlsx`, `.pdf`, `.docx`… | `documents/imported/` | copied + a line in `documents/INDEX.md` |
 | Connectors | names like Figma, ClickUp, Notion, Linear, Amplitude; MCP URLs | — | offered: `.agate/core/guides/mcp-add.md` (official first, ask) |
 | API key names | `*_API_KEY`, `*_TOKEN`, `*_SECRET` | `.env.example` | `agate.py env add NAME --where … --for …` (names only) |
+| claude.ai-only paths | `/mnt/skills`, `/mnt/user-data`, `/mnt/data`, `/mnt/outputs`, `/home/claude` inside an agent, skill or instructions | marked NEEDS ADAPTATION | copied, then listed to adapt with the person: own folder or `documents/` for inputs, `artifacts/` for outputs, PDFs via HTML + `agate.py export pdf` |
 | `.env`, credentials | file name | — | skipped; key-looking lines are dropped everywhere |
 
 ## From an agent prompt to an Agate skill (flows > roles)

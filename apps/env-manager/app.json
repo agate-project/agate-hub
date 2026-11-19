@@ -1,6 +1,6 @@
 {
   "name": "env-manager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Paste API keys into the project's .env without them passing through the AI: a one-time, write-only local page opened through a private channel.",
   "run": "python3 .agate/apps/env-manager/run.py --for <package>",
   "requires": {"agate": ">=0.4.1", "python": ">=3.9"},

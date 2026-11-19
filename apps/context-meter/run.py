@@ -228,9 +228,11 @@ def open_report(root, path, f):
         subprocess.Popen([sys.executable, os.path.abspath(__file__), "_serve", path, str(port), "600"],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
         time.sleep(0.4)
-        ok, _ = launch.open_orca("http://127.0.0.1:%d/" % port)
+        ok, why = launch.open_orca("http://127.0.0.1:%d/" % port)
         if ok:
             return "opened in Orca's browser"
+        if why == "not_added":
+            return launch.NOT_ADDED.format(root=root) + " Report: " + path
     if f["display"] and not f["remote"] and not f["in_orca"]:
         ok, _ = launch.open_local("file://" + path)
         if ok:

@@ -245,8 +245,14 @@ def open_orca(url):
     out = (p.stdout or "") + (p.stderr or "")
     if p.returncode != 0 or '"ok": false' in out:
         msg = out.strip()
+        if "selector_not_found" in msg or "No Orca-managed worktree" in msg:
+            return False, "not_added"
         return False, "browser_host_unavailable" if "browser_host_unavailable" in msg else (msg[:120] or "failed")
     return True, ""
+
+
+NOT_ADDED = ("This project is not added to Orca, so Orca's browser can't open it. Add it (`orca repo add --path {root}`"
+             " or from Orca's sidebar) and try again.")
 
 
 def open_local(url):
