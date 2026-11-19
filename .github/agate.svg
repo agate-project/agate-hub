@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Agate">
+  <title>Agate</title>
+  <defs>
+    <!-- Cut gem silhouette -->
+    <clipPath id="gem">
+      <path d="M72 40 H184 L232 100 L128 228 L24 100 Z"/>
+    </clipPath>
+    <radialGradient id="glow" cx="38%" cy="28%" r="70%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset=".45" stop-color="#ffffff" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Banded agate layers (concentric, slightly off-center like a real cut stone) -->
+  <g clip-path="url(#gem)">
+    <rect width="256" height="256" fill="#1f3a5a"/>
+    <g transform="rotate(-24 150 130)">
+    <ellipse cx="135" cy="124" rx="190" ry="137" fill="#2c5d88"/>
+    <ellipse cx="140" cy="124" rx="160" ry="115" fill="#c9ccd0"/>
+    <ellipse cx="145" cy="124" rx="142" ry="101" fill="#7f93a8"/>
+    <ellipse cx="150" cy="124" rx="124" ry="87" fill="#e6e2dc"/>
+    <ellipse cx="155" cy="124" rx="108" ry="75" fill="#a8492a"/>
+    <ellipse cx="159" cy="123" rx="96" ry="67" fill="#d98a63"/>
+    <ellipse cx="163" cy="122" rx="84" ry="58" fill="#f3e1d8"/>
+    <ellipse cx="167" cy="122" rx="70" ry="48" fill="#4c6680"/>
+    <ellipse cx="171" cy="121" rx="56" ry="38" fill="#a9b4c0"/>
+    <ellipse cx="175" cy="120" rx="44" ry="30" fill="#2c5d88"/>
+    <ellipse cx="179" cy="119" rx="32" ry="21" fill="#dde7f1"/>
+    <ellipse cx="183" cy="118" rx="20" ry="12" fill="#7fb0dc"/>
+    <ellipse cx="187" cy="117" rx="9" ry="6" fill="#f7f4ef"/>
+    </g>
+    <!-- Facets -->
+    <path d="M72 40 L100 100 L24 100 Z" fill="#fff" opacity=".10"/>
+    <path d="M184 40 L156 100 L232 100 Z" fill="#000" opacity=".10"/>
+    <path d="M100 100 H156 L128 228 Z" fill="#fff" opacity=".06"/>
+    <path d="M24 100 H100 L128 228 Z" fill="#000" opacity=".08"/>
+    <path d="M156 100 H232 L128 228 Z" fill="#000" opacity=".16"/>
+    <path d="M72 40 H184 L156 100 H100 Z" fill="#fff" opacity=".14"/>
+    <rect width="256" height="256" fill="url(#shade)"/>
+    <rect width="256" height="256" fill="url(#glow)"/>
+  </g>
+
+  <!-- Facet lines and outline -->
+  <g fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="2" stroke-linejoin="round">
+    <path d="M24 100 H232"/>
+    <path d="M72 40 L100 100 L128 228 L156 100 L184 40"/>
+  </g>
+  <path d="M72 40 H184 L232 100 L128 228 L24 100 Z" fill="none" stroke="#14263a" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Sparkle -->
+  <path d="M86 58 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 z" fill="#fff" opacity=".9"/>
+</svg>
