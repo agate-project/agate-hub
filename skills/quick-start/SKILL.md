@@ -1,6 +1,6 @@
 ---
 name: quick-start
-description: Guided start for a new Agate project. Use when the person asks for a quick start, to set up this project, or for onboarding of a new Agate project. A short conversational intake (at most 4 questions) that saves what the project is about, who uses it, the reply language and how the person likes to work.
+description: "Guided start for a new Agate project and import of what the person already uses elsewhere. Use when the person asks for a quick start, to set up or onboard this project, or to bring in a Claude memory export, prompts, agents, skills, CLAUDE.md/AGENTS.md or files from other projects."
 ---
 
 # Quick start
@@ -28,5 +28,18 @@ already said in this chat. Then ask only what is missing, one or two at a time, 
 If the answers point to a specific kind of work (e.g. product discovery, specs, metrics), offer the matching
 extension in one line (`python3 .agate/agate.py add product`). Don't install anything without their ok.
 
-## 4. Close
+## 4. Import what you already use (offer it once)
+Ask whether they have things to bring: a Claude memory export (claude.ai → Settings → export their data or copy what
+Claude remembers into a .md), prompts or notes, Claude Code agents (`.claude/agents/*.md`), skills folders,
+`CLAUDE.md`/`AGENTS.md` or files from other projects (folders or a .zip). Then:
+1. `python3 .agents/skills/quick-start/import.py scan <paths…>` → a short plan per item.
+2. Explain the plan in plain words. Agents become skills (steps and criteria kept, persona trimmed); before keeping a
+   converted agent, check `python3 .agate/agate.py search <topic>` for an existing skill that already does it.
+3. With their ok: `import.py apply --yes`. It copies documents, creates skills, saves memory entries and the
+   person's style, and appends project context to the "This project" section of `AGENTS.md`. It never copies secrets.
+4. Do what it lists as left: offer the connectors it found (`.agate/core/guides/mcp-add.md`, official first) and
+   register key names with `agate.py env add` (values via env-manager or the terminal, never the chat).
+Details and examples: `references/import.md`. This skill includes a script, so installing it asks for consent.
+
+## 5. Close
 Two lines: what you saved and where. Then continue with whatever they wanted to do.
