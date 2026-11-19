@@ -1,0 +1,7 @@
+{
+  "name": "product",
+  "version": "0.0.1",
+  "requires": { "agate": ">=0.3.0" },
+  "owned": [],
+  "blocks": { "AGENTS.md": "agate-product" }
+}

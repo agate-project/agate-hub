@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "about": "Named bundles of extensions and skills. Skills use <source>/<skill> ids from the project's .agate/library.json (agate = this hub, anthropic = anthropics/skills). The base library also defines the generic packs documents, design, writing and build; packs here can reference them with pack:<name>.",
+  "packs": {
+    "product": {
+      "description": "Product work: discovery, proposals, data memos, tickets, design system, editorial PDFs.",
+      "extensions": ["product"],
+      "skills": ["anthropic/frontend-design", "anthropic/pdf", "anthropic/docx", "anthropic/xlsx"],
+      "packs": []
+    }
+  }
+}
