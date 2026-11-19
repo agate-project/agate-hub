@@ -1,56 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Agate">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="256" height="256" role="img" aria-label="Agate">
   <title>Agate</title>
   <defs>
-    <!-- Cut gem silhouette -->
-    <clipPath id="gem">
-      <path d="M72 40 H184 L232 100 L128 228 L24 100 Z"/>
+    <!-- macOS-style squircle -->
+    <clipPath id="sq">
+      <path d="M256 40c118 0 158 0 187 29s29 69 29 187-0 158-29 187-69 29-187 29-158 0-187-29-29-69-29-187 0-158 29-187 69-29 187-29z"/>
     </clipPath>
-    <radialGradient id="glow" cx="38%" cy="28%" r="70%">
-      <stop offset="0" stop-color="#ffffff" stop-opacity=".55"/>
-      <stop offset=".45" stop-color="#ffffff" stop-opacity=".08"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <filter id="halo" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <radialGradient id="sheen" cx="32%" cy="22%" r="75%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/>
+      <stop offset=".35" stop-color="#fff" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity=".28"/>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9fc4ea"/>
+      <stop offset="1" stop-color="#3d6b9a"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".25"/>
     </linearGradient>
   </defs>
 
-  <!-- Banded agate layers (concentric, slightly off-center like a real cut stone) -->
-  <g clip-path="url(#gem)">
-    <rect width="256" height="256" fill="#1f3a5a"/>
-    <g transform="rotate(-24 150 130)">
-    <ellipse cx="135" cy="124" rx="190" ry="137" fill="#2c5d88"/>
-    <ellipse cx="140" cy="124" rx="160" ry="115" fill="#c9ccd0"/>
-    <ellipse cx="145" cy="124" rx="142" ry="101" fill="#7f93a8"/>
-    <ellipse cx="150" cy="124" rx="124" ry="87" fill="#e6e2dc"/>
-    <ellipse cx="155" cy="124" rx="108" ry="75" fill="#a8492a"/>
-    <ellipse cx="159" cy="123" rx="96" ry="67" fill="#d98a63"/>
-    <ellipse cx="163" cy="122" rx="84" ry="58" fill="#f3e1d8"/>
-    <ellipse cx="167" cy="122" rx="70" ry="48" fill="#4c6680"/>
-    <ellipse cx="171" cy="121" rx="56" ry="38" fill="#a9b4c0"/>
-    <ellipse cx="175" cy="120" rx="44" ry="30" fill="#2c5d88"/>
-    <ellipse cx="179" cy="119" rx="32" ry="21" fill="#dde7f1"/>
-    <ellipse cx="183" cy="118" rx="20" ry="12" fill="#7fb0dc"/>
-    <ellipse cx="187" cy="117" rx="9" ry="6" fill="#f7f4ef"/>
+  <!-- soft glow around the icon -->
+  <path d="M256 70c104 0 140 0 165 25s25 61 25 161 0 140-25 165-61 25-165 25-140 0-165-25-25-61-25-165 0-136 25-161 61-25 165-25z"
+        fill="#7fb0dc" opacity=".45" filter="url(#halo)"/>
+
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="url(#base)"/>
+    <!-- banded agate, blurred so it reads as polished stone -->
+    <g filter="url(#soft)" transform="rotate(-28 290 250)">
+      <ellipse cx="300" cy="250" rx="330" ry="250" fill="#2f5f8f"/>
+      <ellipse cx="306" cy="248" rx="285" ry="214" fill="#b9d3ec"/>
+      <ellipse cx="312" cy="246" rx="248" ry="184" fill="#5b87b4"/>
+      <ellipse cx="318" cy="244" rx="214" ry="158" fill="#f4e9df"/>
+      <ellipse cx="324" cy="242" rx="186" ry="136" fill="#d98a63"/>
+      <ellipse cx="330" cy="240" rx="160" ry="116" fill="#f6c9ad"/>
+      <ellipse cx="336" cy="238" rx="134" ry="96" fill="#a8492a"/>
+      <ellipse cx="342" cy="236" rx="112" ry="79" fill="#f3e1d8"/>
+      <ellipse cx="348" cy="234" rx="90" ry="63" fill="#4c7aa8"/>
+      <ellipse cx="354" cy="232" rx="68" ry="47" fill="#cfe2f4"/>
+      <ellipse cx="360" cy="230" rx="46" ry="31" fill="#7fb0dc"/>
+      <ellipse cx="366" cy="228" rx="24" ry="16" fill="#fbf7f2"/>
     </g>
-    <!-- Facets -->
-    <path d="M72 40 L100 100 L24 100 Z" fill="#fff" opacity=".10"/>
-    <path d="M184 40 L156 100 L232 100 Z" fill="#000" opacity=".10"/>
-    <path d="M100 100 H156 L128 228 Z" fill="#fff" opacity=".06"/>
-    <path d="M24 100 H100 L128 228 Z" fill="#000" opacity=".08"/>
-    <path d="M156 100 H232 L128 228 Z" fill="#000" opacity=".16"/>
-    <path d="M72 40 H184 L156 100 H100 Z" fill="#fff" opacity=".14"/>
-    <rect width="256" height="256" fill="url(#shade)"/>
-    <rect width="256" height="256" fill="url(#glow)"/>
+    <rect width="512" height="512" fill="url(#sheen)"/>
   </g>
 
-  <!-- Facet lines and outline -->
-  <g fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="2" stroke-linejoin="round">
-    <path d="M24 100 H232"/>
-    <path d="M72 40 L100 100 L128 228 L156 100 L184 40"/>
-  </g>
-  <path d="M72 40 H184 L232 100 L128 228 L24 100 Z" fill="none" stroke="#14263a" stroke-width="4" stroke-linejoin="round"/>
-  <!-- Sparkle -->
-  <path d="M86 58 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 z" fill="#fff" opacity=".9"/>
+  <!-- glass rim -->
+  <path d="M256 40c118 0 158 0 187 29s29 69 29 187-0 158-29 187-69 29-187 29-158 0-187-29-29-69-29-187 0-158 29-187 69-29 187-29z"
+        fill="none" stroke="url(#rim)" stroke-width="6" opacity=".9"/>
 </svg>
